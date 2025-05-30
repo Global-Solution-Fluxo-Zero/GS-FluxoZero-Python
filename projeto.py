@@ -113,23 +113,6 @@ def menu_simulacao():
             case _:
                 print("Insira um valor válido!\n")
 
-
-
-while True:
-    opcao = menu_inicial()
-    match opcao:
-        case "1":
-            print("Iniciando simulação...\n")
-            menu_simulacao()
-        case "2":
-            print("Abrindo histórico da simulação...\n")
-        case "3":
-            print("Saindo do programa...\n")
-            break
-        case _:
-            print("Insira um valor válido!")
-
-
 def menu_historico():
     while True:
         print(":: Histórico das enchentes ::")
@@ -176,3 +159,17 @@ def menu_historico():
             case _:
                 print("Insira um valor válido!\n")
 
+while True:
+    opcao = menu_inicial()
+    match opcao:
+        case "1":
+            print("Iniciando simulação...\n")
+            menu_simulacao()
+        case "2":
+            print("Abrindo histórico da simulação...\n")
+            menu_historico()
+        case "3":
+            print("Saindo do programa...\n")
+            break
+        case _:
+            print("Insira um valor válido!")
