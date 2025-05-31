@@ -9,7 +9,7 @@ relevo_urbano_bool = None
 eficiencia_drenagem = None
 distancia_fluvial = None
 obstrucao_bool = None
-
+setupsimulacao = 0
 def simulacao_config():
     global mm_chuva
     global hrs_chuva
@@ -19,15 +19,38 @@ def simulacao_config():
     global eficiencia_drenagem
     global distancia_fluvial
     global obstrucao_bool
-    
+    global setupsimulacao
+
     mm_chuva = float(input("Insira a quantidade de chuva prevista em mm: "))
     hrs_chuva = float(input("Insira quantas horas a chuva ira durar: "))
     tipo_solo = input("Tipo de solo do local observado (1 - Rochoso, 2 - Argiloso, 3 - Aluvial, 4 - Arenoso): ")
+    if tipo_solo not in ["1", "2", "3", "4"]:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...")
+        return
     tipo_infiltracao = input("Tipo de infiltração do solo (1 - Alta, 2 - Médio, 3 - Baixo): ")
+    if tipo_infiltracao not in ["1", "2", "3"]:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...")
+        return
     relevo_urbano_bool = input("O relevo é urbanizado? (1 - Sim, 2 - Não): ")
+    if relevo_urbano_bool not in ["1", "2"]:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...")
+        return
     eficiencia_drenagem = input("A eficiência de drenagem do local (1 - Eficiente, 2 - Moderada, 3 - Ineficiente, 4 - Inexistente): ")
+    if eficiencia_drenagem not in ["1", "2", "3", "4"]:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...")
+        return
     distancia_fluvial = float(input("Qual é a distância (em metros) de um rio ou lago do local onde você está?: "))
     obstrucao_bool = input("Há lixo, entulho, entupimentos em bueiros ou vias no local onde você está? (1 - Sim, 2 - Não): ")
+    if obstrucao_bool not in ["1", "2"]:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...")
+        return
+    setupsimulacao = 1
+
 
 def simulacao_calc(
         mm_chuva,
@@ -253,8 +276,11 @@ def menu_simulacao():
                 simulacao_config()
                 #perguntar se quer salvar o historico com nova func
             case "b":
-                print("Gerando resposta...\n")
-                simulacao_insight(simulacao_calc(mm_chuva, hrs_chuva, tipo_solo, tipo_infiltracao, relevo_urbano_bool, eficiencia_drenagem, distancia_fluvial, obstrucao_bool))
+                if setupsimulacao == 1:
+                    print("Gerando resposta...\n")
+                    simulacao_insight(simulacao_calc(mm_chuva, hrs_chuva, tipo_solo, tipo_infiltracao, relevo_urbano_bool, eficiencia_drenagem, distancia_fluvial, obstrucao_bool))
+                else:
+                    print("Setup da configuração não está pronto... Faça antes de iniciar!\n")
             case "c":
                 print("Fechando simulação...\n")
                 break
