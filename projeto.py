@@ -50,7 +50,7 @@ def simulacao_calc(
     elif chuva_mmhrs > 2.5 and chuva_mmhrs <= 10:
         resposta[0] += 10
         resposta.append(2)
-    elif chuva_mmhrs > 10 and chuva_mmhrs <= 50:
+    elif chuva_mmhrs > 10 and chuva_mmhrs <= 25:
         resposta[0] += 20
         resposta.append(3)
     else:
@@ -100,9 +100,9 @@ def simulacao_calc(
             resposta.append(4)
 
     if distancia_fluvial <= 250:
+        resposta[0] += 30
         resposta.append(1)
     else:    
-        resposta[0] += 50
         resposta.append(2)
 
     if obstrucao_bool == "1":
@@ -179,12 +179,12 @@ def simulacao_insight(resultado):
     # Relevo Urbanizado
     print("\n")
     match resultado[4]:
-        case 1:
+        case True:
             print("Relevo urbanizado — há construções em regiões de inclinação.")
             print("A impermeabilização do solo reduz a infiltração e aumenta o escoamento superficial.")
             print("Em caso de chuvas fortes, há maior risco de enxurradas, alagamentos e até deslizamentos.")
             print("Preventivo: Implantar sistemas eficientes de drenagem, contenção de encostas e vegetação estabilizadora.")
-        case 2:
+        case False:
             print("Relevo não urbanizado — a área mantém cobertura natural ou rural.")
             print("A presença de vegetação e solo permeável ajuda a absorver a água da chuva.")
             print("Preventivo: Preservar a vegetação nativa e evitar o desmatamento; manter o solo sem compactação excessiva.")
@@ -220,11 +220,11 @@ def simulacao_insight(resultado):
     # Obstruções
     print("\n")
     match resultado[7]:
-        case 1:
+        case True:
             print("Há obstruções (lixo, entulho ou entupimentos) em vias ou bueiros.")
             print("Risco muito alto de alagamentos, mesmo com chuvas fracas, devido ao bloqueio da drenagem.")
             print("Preventivo: Realizar limpeza imediata, campanhas de conscientização e inspeções frequentes em épocas de chuva.")
-        case 2:
+        case False:
             print("Nenhuma obstrução visível em vias ou drenagens.")
             print("Boa condição para escoamento da água da chuva.")
             print("Preventivo: Manter a limpeza periódica e monitoramento, especialmente antes de períodos de chuva intensa.")
