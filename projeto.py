@@ -1,3 +1,6 @@
+import json
+import os
+
 print("\n\nBem-vindo a simulação de enchentes da Fluxo Zero™")
 print("=================================================\n\n")
 
@@ -22,35 +25,86 @@ def simulacao_config():
     global setupsimulacao
 
     mm_chuva = float(input("Insira a quantidade de chuva prevista em mm: "))
+    if mm_chuva <= 0:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...\n")
+        return
     hrs_chuva = float(input("Insira quantas horas a chuva ira durar: "))
+    if hrs_chuva <= 0:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...\n")
+        return
     tipo_solo = input("Tipo de solo do local observado (1 - Rochoso, 2 - Argiloso, 3 - Aluvial, 4 - Arenoso): ")
     if tipo_solo not in ["1", "2", "3", "4"]:
         setupsimulacao = 0
-        print("\nInput inválido, refaça a configuração...")
+        print("\nInput inválido, refaça a configuração...\n")
         return
     tipo_infiltracao = input("Tipo de infiltração do solo (1 - Alta, 2 - Médio, 3 - Baixo): ")
     if tipo_infiltracao not in ["1", "2", "3"]:
         setupsimulacao = 0
-        print("\nInput inválido, refaça a configuração...")
+        print("\nInput inválido, refaça a configuração...\n")
         return
     relevo_urbano_bool = input("O relevo é urbanizado? (1 - Sim, 2 - Não): ")
     if relevo_urbano_bool not in ["1", "2"]:
         setupsimulacao = 0
-        print("\nInput inválido, refaça a configuração...")
+        print("\nInput inválido, refaça a configuração...\n")
         return
     eficiencia_drenagem = input("A eficiência de drenagem do local (1 - Eficiente, 2 - Moderada, 3 - Ineficiente, 4 - Inexistente): ")
     if eficiencia_drenagem not in ["1", "2", "3", "4"]:
         setupsimulacao = 0
-        print("\nInput inválido, refaça a configuração...")
+        print("\nInput inválido, refaça a configuração...\n")
         return
     distancia_fluvial = float(input("Qual é a distância (em metros) de um rio ou lago do local onde você está?: "))
+    if distancia_fluvial <= 0:
+        setupsimulacao = 0
+        print("\nInput inválido, refaça a configuração...\n")
+        return
     obstrucao_bool = input("Há lixo, entulho, entupimentos em bueiros ou vias no local onde você está? (1 - Sim, 2 - Não): ")
     if obstrucao_bool not in ["1", "2"]:
         setupsimulacao = 0
-        print("\nInput inválido, refaça a configuração...")
+        print("\nInput inválido, refaça a configuração...\n")
         return
     setupsimulacao = 1
 
+def simulacao_salvarConfig():
+    while True:
+        opcao = input("Deseja salvar a configuração para simulações futuras? (1 - Sim, 2 - Não): ")
+        if opcao == "1":
+            nome = input("Digite um nome da configuração a salvar. \nCaso tenha repetido o nome, será cancelado: ")
+            jsonSalvar({
+                "nome": nome,
+                "mm_chuva": mm_chuva,
+                "hrs_chuva": hrs_chuva,
+                "tipo_solo": tipo_solo,
+                "tipo_infiltracao": tipo_infiltracao,
+                "relevo_urbano_bool": relevo_urbano_bool,
+                "eficiencia_drenagem": eficiencia_drenagem,
+                "distancia_fluvial": distancia_fluvial,
+                "obstrucao_bool": obstrucao_bool
+            })
+            break
+        elif opcao == "2":
+            break
+        else:
+            print("Selecione uma opção válida!")
+
+def jsonSalvar(config):
+    print("\nSalvando...")
+    caminho_arquivo = "dados.json"
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+    else:
+        dados = []
+
+    nomes_existentes = [item["nome"] for item in dados]
+    if config["nome"] not in nomes_existentes:
+        dados.append(config)
+        with open(caminho_arquivo, "w", encoding="utf-8") as f:
+            json.dump(dados, f, ensure_ascii=False, indent=4)
+        print("Salvo!")
+    else:
+        print("Nome repetido detectado, cancelando salvamento...")
 
 def simulacao_calc(
         mm_chuva,
@@ -274,13 +328,13 @@ def menu_simulacao():
         match opcao:
             case "a":
                 simulacao_config()
-                #perguntar se quer salvar o historico com nova func
+                simulacao_salvarConfig()
             case "b":
                 if setupsimulacao == 1:
                     print("Gerando resposta...\n")
                     simulacao_insight(simulacao_calc(mm_chuva, hrs_chuva, tipo_solo, tipo_infiltracao, relevo_urbano_bool, eficiencia_drenagem, distancia_fluvial, obstrucao_bool))
                 else:
-                    print("Setup da configuração não está pronto... Faça antes de iniciar!\n")
+                    print("Setup da configuração não está pronto... Faça antes de iniciar.\n")
             case "c":
                 print("Fechando simulação...\n")
                 break
