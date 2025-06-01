@@ -71,7 +71,7 @@ def simulacao_config():
 
 def simulacao_salvarConfig():
     while True:
-        opcao = input("Deseja salvar a configuração para simulações futuras? (1 - Sim, 2 - Não): ")
+        opcao = input("Deseja salvar a configuração no histórico para simulações futuras? (1 - Sim, 2 - Não): ")
         if opcao == "1":
             nome = input("Digite um nome da configuração a salvar. \nCaso tenha repetido o nome, será cancelado: ")
             jsonSalvar({
@@ -296,14 +296,15 @@ def simulacao_insight(resultado):
             print("Preventivo: Projetar e implantar um sistema de drenagem básico com canais, bueiros e áreas de absorção.")
     # Distância fluvial
     print("\n")
-    if resultado[6] <= 250:
-        print("Distância fluvial próxima (até 250 m).")
-        print("Alto risco de alagamentos por transbordamento de rios ou lagos próximos.")
-        print("Preventivo: Monitoramento constante do nível da água, uso de barreiras físicas e sistemas de alerta antecipado.")
-    else:
-        print("Distância fluvial segura (> 250 m).")
-        print("Baixo risco de enchente direta por proximidade com rios ou lagos.")
-        print("Preventivo: Mesmo em zonas mais distantes, mantenha sistemas de drenagem para evitar acúmulo de água por outras causas.")
+    match resultado[6]:
+        case 1:
+            print("Distância fluvial próxima (até 250 m).")
+            print("Alto risco de alagamentos por transbordamento de rios ou lagos próximos.")
+            print("Preventivo: Monitoramento constante do nível da água, uso de barreiras físicas e sistemas de alerta antecipado.")
+        case 2:
+            print("Distância fluvial segura (> 250 m).")
+            print("Baixo risco de enchente direta por proximidade com rios ou lagos.")
+            print("Preventivo: Mesmo em zonas mais distantes, mantenha sistemas de drenagem para evitar acúmulo de água por outras causas.")
     # Obstruções
     print("\n")
     match resultado[7]:
@@ -345,8 +346,20 @@ def historico_Listar():
                 relevo_urbano_txt = "Sim"
             case "2":
                 relevo_urbano_txt = "Não"
-        drenagem_txt = i["eficiencia_drenagem"]
-        obstrucao_txt = i["obstrucao_bool"]
+        match i["eficiencia_drenagem"]:
+            case "1":
+                drenagem_txt = "Eficiente"
+            case "2":
+                drenagem_txt = "Moderado"
+            case "3":
+                drenagem_txt = "Ineficiente"
+            case "4":
+                drenagem_txt = "Inexistente"
+        match i["obstrucao_bool"]:
+            case "1":
+                obstrucao_txt = "Sim"
+            case "2":
+                obstrucao_txt = "Não"
         print(f"""==================================
     {i["nome"]}:
     Chuva (mm/hr) -> {i["mm_chuva"]}/{i["hrs_chuva"]}; Solo -> {solo_txt};
@@ -354,7 +367,24 @@ def historico_Listar():
     Eficiência da drenagem -> {drenagem_txt}; Há obstrução do local? -> {obstrucao_txt}
     Distância do rio mais próximo -> {i["distancia_fluvial"]}
 ==================================""")
+    print("\n")
 
+def historico_Achar():
+    nome = input("\nDigite o nome exato do histórico que deseje achar: ")
+    dados = jsonLer()
+    for i in dados:
+        if nome in i["nome"]:
+            simulacao_insight(simulacao_calc(
+                i["mm_chuva"],
+                i["hrs_chuva"],
+                i["tipo_solo"],
+                i["tipo_infiltracao"],
+                i["relevo_urbano_bool"],
+                i["eficiencia_drenagem"],
+                i["distancia_fluvial"],
+                i["obstrucao_bool"]))
+            return
+    print("Não achou... verifique a lista novamente.\n")
 def menu_inicial():
 
     print("1 - Iniciar simulação.") # Acessa a simulação
@@ -392,7 +422,7 @@ def menu_historico():
     while True:
         print(":: Histórico das enchentes ::")
         print("\n")
-        print("a. Ver histórico.")
+        print("a. Ver histórico de configurações.")
         print("b. Simular a partir de um histórico.")
         print("c. Apagar um histórico.")
         print("d. Fechar histórico.")
@@ -405,8 +435,7 @@ def menu_historico():
                 historico_Listar()
             case "b":
                 # Simular a partir de um ID 
-                digite_id = input("Digite o ID da simulação que deseja reproduzir: ")
-                print(f"Reproduzindo simulação com ID: {digite_id}...\n")
+                historico_Achar()
             case "c":
                 print("Digie um ID para apagar o histórico: ")
                 digite_id = input("Digite o ID da simulação que deseja apagar: ")
