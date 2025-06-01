@@ -4,6 +4,9 @@ import os
 print("\n\nBem-vindo a simulação de enchentes da Fluxo Zero™")
 print("=================================================\n\n")
 
+caminho_arquivo = "dados.json"
+
+
 mm_chuva = None
 hrs_chuva = None
 tipo_solo = None
@@ -90,7 +93,6 @@ def simulacao_salvarConfig():
 
 def jsonSalvar(config):
     print("\nSalvando...")
-    caminho_arquivo = "dados.json"
     if os.path.exists(caminho_arquivo):
         with open(caminho_arquivo, "r", encoding="utf-8") as f:
             dados = json.load(f)
@@ -105,6 +107,14 @@ def jsonSalvar(config):
         print("Salvo!")
     else:
         print("Nome repetido detectado, cancelando salvamento...")
+
+def jsonLer():
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+    else:
+        dados = []
+    return dados
 
 def simulacao_calc(
         mm_chuva,
@@ -308,6 +318,42 @@ def simulacao_insight(resultado):
     print("\n")
     input("Aperte ENTER para continuar...\n")
 
+def historico_Listar():
+    dados = jsonLer()
+    if dados == []:
+        print("\nO histórico está vázio...\n")
+        return
+    for i in dados:
+        match i["tipo_solo"]:
+            case "1":
+                solo_txt = "Rochoso"
+            case "2":
+                solo_txt = "Argiloso"
+            case "3":
+                solo_txt = "Aluvial"
+            case "4":
+                solo_txt = "Arenoso" 
+        match i["tipo_infiltracao"]:
+            case "1":
+                infiltracao_txt = "Alta"
+            case "2":
+                infiltracao_txt = "Média"
+            case "3":
+                infiltracao_txt = "Baixa"
+        match i["relevo_urbano_bool"]:
+            case "1":
+                
+        relevo_urbano_txt = i["relevo_urbano_bool"]
+        drenagem_txt = i["eficiencia_drenagem"]
+        obstrucao_txt = i["obstrucao_bool"]
+        print(f"""==================================
+    {i["nome"]}:
+    Chuva (mm/hr) -> {i["mm_chuva"]}/{i["hrs_chuva"]}; Solo -> {solo_txt};
+    Infiltração -> {infiltracao_txt}; Relevo Urbano presente? -> {relevo_urbano_txt};
+    Eficiência da drenagem -> {drenagem_txt}; Há obstrução do local? -> {obstrucao_txt}
+    Distância do rio mais próximo -> {i["distancia_fluvial"]}
+==================================""")
+
 def menu_inicial():
 
     print("1 - Iniciar simulação.") # Acessa a simulação
@@ -353,8 +399,9 @@ def menu_historico():
 
         match opcao:
             case "a":
-                # Mostrar todo o histórico de simulações
-                print("Exibindo histórico de simulações...\n")
+                # Mostrar todo o histórico de configurações de simulação
+                print("Exibindo histórico de configurações de simulação...\n")
+                historico_Listar()
             case "b":
                 # Simular a partir de um ID 
                 digite_id = input("Digite o ID da simulação que deseja reproduzir: ")
