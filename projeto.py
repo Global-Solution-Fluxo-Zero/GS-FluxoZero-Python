@@ -104,7 +104,7 @@ def jsonSalvar(config):
         dados.append(config)
         with open(caminho_arquivo, "w", encoding="utf-8") as f:
             json.dump(dados, f, ensure_ascii=False, indent=4)
-        print("Salvo!")
+        print("Salvo!\n")
     else:
         print("Nome repetido detectado, cancelando salvamento...")
 
@@ -115,6 +115,23 @@ def jsonLer():
     else:
         dados = []
     return dados
+
+def jsonApagar(nome):
+    print("\nApagando...")
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+    else:
+        dados = []
+
+    for i in range(len(dados)):
+        if nome in dados[i]["nome"]:
+            dados.pop(i)
+            with open(caminho_arquivo, "w", encoding="utf-8") as f:
+                json.dump(dados, f, ensure_ascii=False, indent=4)
+            print("Apagado com sucesso!\n")
+            return
+    print("Nome não encontrado... verifique a lista.\n")
 
 def simulacao_calc(
         mm_chuva,
@@ -360,13 +377,13 @@ def historico_Listar():
                 obstrucao_txt = "Sim"
             case "2":
                 obstrucao_txt = "Não"
-        print(f"""==================================
+        print(f"""=======================================================================
     {i["nome"]}:
     Chuva (mm/hr) -> {i["mm_chuva"]}/{i["hrs_chuva"]}; Solo -> {solo_txt};
     Infiltração -> {infiltracao_txt}; Relevo Urbano presente? -> {relevo_urbano_txt};
     Eficiência da drenagem -> {drenagem_txt}; Há obstrução do local? -> {obstrucao_txt}
     Distância do rio mais próximo -> {i["distancia_fluvial"]}
-==================================""")
+=======================================================================""")
     print("\n")
 
 def historico_Achar():
@@ -385,6 +402,19 @@ def historico_Achar():
                 i["obstrucao_bool"]))
             return
     print("Não achou... verifique a lista novamente.\n")
+
+def historico_Deletar():
+    digite_nome = input("\nDigite um nome para apagar uma configuração do histórico: ")
+    print(f"Apagando simulação com nome: {digite_nome}...\n")
+    certeza_apagar = input("Você tem certeza que deseja apagar essa simulação? (1 - Sim, 2- Não ): ")
+    match certeza_apagar:
+        case "1":
+            jsonApagar(digite_nome)
+        case "2":
+            print("Apagamento cancelado.\n")
+        case _:
+            print("Opção inválida. Retornando ao menu principal.\n")
+
 def menu_inicial():
 
     print("1 - Iniciar simulação.") # Acessa a simulação
@@ -405,7 +435,8 @@ def menu_simulacao():
         match opcao:
             case "a":
                 simulacao_config()
-                simulacao_salvarConfig()
+                if setupsimulacao == 1:
+                    simulacao_salvarConfig()
             case "b":
                 if setupsimulacao == 1:
                     print("Gerando resposta...\n")
@@ -437,17 +468,7 @@ def menu_historico():
                 # Simular a partir de um ID 
                 historico_Achar()
             case "c":
-                print("Digie um ID para apagar o histórico: ")
-                digite_id = input("Digite o ID da simulação que deseja apagar: ")
-                print(f"Apagando simulação com ID: {digite_id}...\n")
-                certeza_apagar = input("Você tem certeza que deseja apagar essa simulação? (1 - Sim, 2- Não ): ")
-                match certeza_apagar:
-                    case "1":
-                        print("Simulação apagada com sucesso!\n")
-                    case "2":
-                        print("Apagamento cancelado.\n")
-                    case _:
-                        print("Opção inválida. Retornando ao menu principal.\n")
+                historico_Deletar()
             case "d":
                 print("Fechando histórico...\n")
                 break
