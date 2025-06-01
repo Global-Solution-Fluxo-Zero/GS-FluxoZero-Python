@@ -342,8 +342,9 @@ def historico_Listar():
                 infiltracao_txt = "Baixa"
         match i["relevo_urbano_bool"]:
             case "1":
-                
-        relevo_urbano_txt = i["relevo_urbano_bool"]
+                relevo_urbano_txt = "Sim"
+            case "2":
+                relevo_urbano_txt = "Não"
         drenagem_txt = i["eficiencia_drenagem"]
         obstrucao_txt = i["obstrucao_bool"]
         print(f"""==================================
