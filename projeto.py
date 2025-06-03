@@ -1,3 +1,4 @@
+# Importação das bibliotecas necessárias
 import json
 import os
 
@@ -6,7 +7,7 @@ print("=================================================\n\n")
 
 caminho_arquivo = "dados.json"
 
-
+# Declarando variáveis globais para a simulação
 mm_chuva = None
 hrs_chuva = None
 tipo_solo = None
@@ -69,6 +70,7 @@ def simulacao_config():
         return
     setupsimulacao = 1
 
+# Função para salvar a configuração da simulação no histórico
 def simulacao_salvarConfig():
     while True:
         opcao = input("Deseja salvar a configuração no histórico para simulações futuras? (1 - Sim, 2 - Não): ")
@@ -91,6 +93,7 @@ def simulacao_salvarConfig():
         else:
             print("Selecione uma opção válida!")
 
+# Funções para manipulação do arquivo JSON
 def jsonSalvar(config):
     print("\nSalvando...")
     if os.path.exists(caminho_arquivo):
@@ -108,6 +111,7 @@ def jsonSalvar(config):
     else:
         print("Nome repetido detectado, cancelando salvamento...")
 
+# Função para ler o arquivo JSON
 def jsonLer():
     if os.path.exists(caminho_arquivo):
         with open(caminho_arquivo, "r", encoding="utf-8") as f:
@@ -116,6 +120,7 @@ def jsonLer():
         dados = []
     return dados
 
+# Função para apagar uma configuração do histórico
 def jsonApagar(nome):
     print("\nApagando...")
     if os.path.exists(caminho_arquivo):
@@ -133,6 +138,7 @@ def jsonApagar(nome):
             return
     print("Nome não encontrado... verifique a lista.\n")
 
+# Função para calcular o risco de alagamento com base nos parâmetros fornecidos
 def simulacao_calc(
         mm_chuva,
         hrs_chuva,
@@ -217,6 +223,7 @@ def simulacao_calc(
 
     return resposta
 
+# Função para gerar insights com base no resultado da simulação
 def simulacao_insight(resultado):
     if resultado[0] < 30:
         print("Risco muito baixo de alagamentos na situação atual.")
@@ -336,6 +343,7 @@ def simulacao_insight(resultado):
     print("\n")
     input("Aperte ENTER para continuar...\n")
 
+# Funções para manipulação do histórico de simulações
 def historico_Listar():
     dados = jsonLer()
     if dados == []:
@@ -386,6 +394,7 @@ def historico_Listar():
 =======================================================================""")
     print("\n")
 
+# Função para achar uma simulação no histórico e iniciar a simulação com os dados encontrados
 def historico_Achar():
     nome = input("\nDigite o nome exato do histórico que deseje achar: ")
     dados = jsonLer()
@@ -403,6 +412,7 @@ def historico_Achar():
             return
     print("Não achou... verifique a lista novamente.\n")
 
+# Função para apagar uma configuração do histórico
 def historico_Deletar():
     digite_nome = input("\nDigite um nome para apagar uma configuração do histórico: ")
     print(f"Apagando simulação com nome: {digite_nome}...\n")
@@ -415,6 +425,7 @@ def historico_Deletar():
         case _:
             print("Opção inválida. Retornando ao menu principal.\n")
 
+# Funções de menu para navegação no programa
 def menu_inicial():
 
     print("1 - Iniciar simulação.") # Acessa a simulação
@@ -423,6 +434,7 @@ def menu_inicial():
     escolha = input("\nEscolha uma opção: ")
     return escolha
 
+# Função para o menu de simulação
 def menu_simulacao():
     while True:
         print(":: Simulação de enchentes ::")
@@ -449,6 +461,7 @@ def menu_simulacao():
             case _:
                 print("Insira um valor válido!\n")
 
+# Função para o menu de histórico
 def menu_historico():
     while True:
         print(":: Histórico das enchentes ::")
@@ -475,6 +488,7 @@ def menu_historico():
             case _:
                 print("Insira um valor válido!\n")
 
+# Loop principal do programa
 while True:
     opcao = menu_inicial()
     match opcao:
