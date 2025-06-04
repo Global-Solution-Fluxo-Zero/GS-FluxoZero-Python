@@ -27,7 +27,7 @@ def simulacao_config():
     global distancia_fluvial
     global obstrucao_bool
     global setupsimulacao
-
+    # Formulario de perguntas para salvar nas variáveis
     mm_chuva = float(input("Insira a quantidade de chuva prevista em mm: "))
     if mm_chuva <= 0:
         setupsimulacao = 0
@@ -96,10 +96,10 @@ def simulacao_salvarConfig():
 # Funções para manipulação do arquivo JSON
 def jsonSalvar(config):
     print("\nSalvando...")
-    if os.path.exists(caminho_arquivo):
+    if os.path.exists(caminho_arquivo): # Verifica se o arquivo existe
         with open(caminho_arquivo, "r", encoding="utf-8") as f:
-            dados = json.load(f)
-    else:
+            dados = json.load(f) # Pega os dados do arquivo
+    else: # Cria uma lista vazia
         dados = []
 
     nomes_existentes = [item["nome"] for item in dados]
