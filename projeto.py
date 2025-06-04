@@ -102,7 +102,9 @@ def jsonSalvar(config):
     else: # Cria uma lista vazia
         dados = []
 
+# Lista de nomes de configurações já existentes
     nomes_existentes = [item["nome"] for item in dados]
+    # Salvar dados se o nome não existir
     if config["nome"] not in nomes_existentes:
         dados.append(config)
         with open(caminho_arquivo, "w", encoding="utf-8") as f:
@@ -123,17 +125,17 @@ def jsonLer():
 # Função para apagar uma configuração do histórico
 def jsonApagar(nome):
     print("\nApagando...")
-    if os.path.exists(caminho_arquivo):
+    if os.path.exists(caminho_arquivo): # Verifica se o arquivo existe
         with open(caminho_arquivo, "r", encoding="utf-8") as f:
-            dados = json.load(f)
+            dados = json.load(f) # Pega os dados do arquivo
     else:
-        dados = []
+        dados = [] #Cria uma lista vazia
 
     for i in range(len(dados)):
         if nome in dados[i]["nome"]:
             dados.pop(i)
             with open(caminho_arquivo, "w", encoding="utf-8") as f:
-                json.dump(dados, f, ensure_ascii=False, indent=4)
+                json.dump(dados, f, ensure_ascii=False, indent=4) # Apagando os dados do arquivo referente ao nome
             print("Apagado com sucesso!\n")
             return
     print("Nome não encontrado... verifique a lista.\n")
@@ -151,10 +153,14 @@ def simulacao_calc(
         ):
     #[pontos, chuva_tipo, tipo_solo, 
     # tipo_infiltracao, relevo_urbano, sistema_drenagem,
-    # distancia_rio, obstrucao]
+    # distancia_rio, obstrucao] 
+    # Tipo de retorno
+
     resposta = [0]
     chuva_mmhrs = mm_chuva/hrs_chuva
 
+# Classificação da chuva
+# A chuva é classificada em quatro categorias com base na intensidade
     if chuva_mmhrs <= 2.5:
         resposta.append(1)
     elif chuva_mmhrs > 2.5 and chuva_mmhrs <= 10:
@@ -167,6 +173,8 @@ def simulacao_calc(
         resposta[0] += 30
         resposta.append(4)
 
+# Classificação do tipo de solo
+    # O tipo de solo é classificado em quatro categorias, cada uma com um valor de pontos associado
     match tipo_solo:
         case "1":
             resposta[0] += 30
@@ -180,6 +188,8 @@ def simulacao_calc(
         case "4":
             resposta.append(4)
     
+    # Classificação da infiltração do solo
+    # A infiltração do solo é classificada em três categorias, cada uma com um valor de pontos associado
     match tipo_infiltracao:
         case "1":
             resposta.append(1)
@@ -190,6 +200,8 @@ def simulacao_calc(
             resposta[0] += 20
             resposta.append(3)
      
+    #  Classificação do relevo urbanizado
+    # O relevo urbanizado é classificado como verdadeiro ou falso, com um valor de pontos associado
     if relevo_urbano_bool == "1":
         resposta[0] += 20
         resposta.append(True)
@@ -209,6 +221,8 @@ def simulacao_calc(
             resposta[0] += 40
             resposta.append(4)
 
+    # Classificação da distância fluvial
+    # A distância fluvial é classificada em duas categorias, cada uma com um valor de pontos associado
     if distancia_fluvial <= 250:
         resposta[0] += 30
         resposta.append(1)
@@ -235,6 +249,8 @@ def simulacao_insight(resultado):
         print("Risco muito alto — medidas preventivas são recomendadas imediatamente.")
     # Chuva
     print("\n")
+
+    # Classificação da chuva
     match resultado[1]:
         case 1:
             print("Chuva fraca (até 5 mm) — baixo risco de alagamentos isoladamente.")
@@ -349,7 +365,7 @@ def historico_Listar():
     if dados == []:
         print("\nO histórico está vázio...\n")
         return
-    for i in dados:
+    for i in dados: # loop para cada item no histórico convertido em dicionário
         match i["tipo_solo"]:
             case "1":
                 solo_txt = "Rochoso"
@@ -430,12 +446,12 @@ def menu_inicial():
 
     print("1 - Iniciar simulação.") # Acessa a simulação
     print("2 - Histórico de simulações anteriores.") # Acessa o json
-    print("3 - Sair do programa.")
+    print("3 - Sair do programa.") 
     escolha = input("\nEscolha uma opção: ")
     return escolha
 
 # Função para o menu de simulação
-def menu_simulacao():
+def menu_simulacao(): 
     while True:
         print(":: Simulação de enchentes ::")
         print("\n")
@@ -447,17 +463,22 @@ def menu_simulacao():
         match opcao:
             case "a":
                 simulacao_config()
+                # Cria uma simulação com as variáveis definidas
                 if setupsimulacao == 1:
                     simulacao_salvarConfig()
+                    # Caso a configuração esteja pronta, salva no histórico
             case "b":
                 if setupsimulacao == 1:
                     print("Gerando resposta...\n")
                     simulacao_insight(simulacao_calc(mm_chuva, hrs_chuva, tipo_solo, tipo_infiltracao, relevo_urbano_bool, eficiencia_drenagem, distancia_fluvial, obstrucao_bool))
+                    # Caso a configuração esteja pronta, inicia a simulação
                 else:
                     print("Setup da configuração não está pronto... Faça antes de iniciar.\n")
+                # Caso a configuração não esteja pronta, avisa o usuário
             case "c":
                 print("Fechando simulação...\n")
                 break
+                # Fechar o menu de simulação
             case _:
                 print("Insira um valor válido!\n")
 
@@ -482,9 +503,11 @@ def menu_historico():
                 historico_Achar()
             case "c":
                 historico_Deletar()
+                # Apagar uma configuração do histórico
             case "d":
                 print("Fechando histórico...\n")
                 break
+                # Fechar o menu de histórico
             case _:
                 print("Insira um valor válido!\n")
 
@@ -492,14 +515,18 @@ def menu_historico():
 while True:
     opcao = menu_inicial()
     match opcao:
+        # Inicia a simulação, acessa o histórico ou sai do programa
         case "1":
             print("Iniciando simulação...\n")
             menu_simulacao()
+            # Caso o usuário queira iniciar uma simulação, chama a função de menu de simulação
         case "2":
             print("Abrindo histórico da simulação...\n")
             menu_historico()
+            # Caso o usuário queira acessar o histórico, chama a função de menu de histórico
         case "3":
             print("Saindo do programa...\n")
             break
+            # Caso o usuário queira sair do programa, encerra o loop
         case _:
             print("Insira um valor válido!")
