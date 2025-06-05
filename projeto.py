@@ -1,3 +1,7 @@
+#563995 Azor Biagioni Tartuce
+#566284 Daniel Oliveira de Souza
+#562757 Lucas de Almeida Pires
+
 # Importação das bibliotecas necessárias
 import json
 import os
