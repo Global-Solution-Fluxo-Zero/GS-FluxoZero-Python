@@ -1,5 +1,7 @@
 Segue abaixo o link para o vídeo explicativo do programa construído em Python para a GS:
 https://youtu.be/qBqybJjxDbY
+Segue abaixo o link para o vídeo pitch desenvolvido para a GS:
+https://youtu.be/8cVvazc5Dls
 Integrantes:
 Azor Biagioni Tartuce, RM: 563995; 
 Daniel Oliveira de Souza, RM: 566284; 
