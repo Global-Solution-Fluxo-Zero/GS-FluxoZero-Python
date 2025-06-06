@@ -1,0 +1,6 @@
+Segue abaixo o link para o vídeo explicativo do programa construído em Python para a GS:
+https://youtu.be/qBqybJjxDbY
+Integrantes:
+Azor Biagioni Tartuce, RM: 563995; 
+Daniel Oliveira de Souza, RM: 566284; 
+Lucas de Almeida Pires, RM: 562757;
